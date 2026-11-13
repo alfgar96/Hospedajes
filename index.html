@@ -2,42 +2,27 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consulta de Hospedaje</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
 body{
-    font-family:Segoe UI,Arial,sans-serif;
+    font-family: Arial, sans-serif;
     background:#f4f6f9;
-    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    min-height:100vh;
+    margin:0;
 }
 
 .card{
     background:white;
-    width:100%;
+    width:90%;
     max-width:450px;
     padding:30px;
     border-radius:15px;
-    box-shadow:0 10px 30px rgba(0,0,0,.1);
-}
-
-.logo{
-    width:130px;
-    display:block;
-    margin:auto;
-    margin-bottom:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
 }
 
 h1{
@@ -52,25 +37,26 @@ input{
     border:1px solid #ccc;
     border-radius:8px;
     font-size:16px;
+    box-sizing:border-box;
 }
 
 button{
     width:100%;
-    margin-top:10px;
     padding:14px;
-    background:#0057b7;
-    color:white;
+    margin-top:10px;
     border:none;
     border-radius:8px;
+    background:#0d5db8;
+    color:white;
     font-size:16px;
     cursor:pointer;
 }
 
 button:hover{
-    background:#00408a;
+    background:#084b95;
 }
 
-.resultado{
+#resultado{
     margin-top:20px;
 }
 
@@ -81,45 +67,31 @@ button:hover{
 }
 
 .nombre{
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
     color:#003366;
 }
 
 .hotel{
-    color:#008000;
-    font-weight:bold;
     margin-top:10px;
-}
-
-.mapa{
-    display:inline-block;
-    margin-top:15px;
-    background:#28a745;
-    color:white;
-    text-decoration:none;
-    padding:10px 15px;
-    border-radius:8px;
+    font-size:18px;
+    color:green;
 }
 
 .error{
     color:red;
     text-align:center;
 }
-
 </style>
 </head>
-
 <body>
 
 <div class="card">
 
-    <!-- Logo opcional -->
-    <!-- <img src="logo.png" class="logo"> -->
-
     <h1>Consulta de Hospedaje</h1>
 
     <input
+        type="text"
         id="ci"
         placeholder="Ingrese su CI">
 
@@ -127,7 +99,7 @@ button:hover{
         Consultar
     </button>
 
-    <div id="resultado" class="resultado"></div>
+    <div id="resultado"></div>
 
 </div>
 
@@ -143,15 +115,15 @@ fetch("hospedajes.csv")
 
     filas.forEach(fila => {
 
-        const c = fila.split(";");
+        const columnas = fila.split(";");
 
-        if (c.length < 5) return;
+        if(columnas.length < 5) return;
 
-        const funcionario = c[2]?.trim();
-        const alojamiento = c[3]?.trim();
-        const ci = c[4]?.replace(/\D/g, "");
+        let funcionario = columnas[2]?.trim();
+        let alojamiento = columnas[3]?.trim();
+        let ci = columnas[4]?.replace(/\D/g,'');
 
-        if (!funcionario || !ci) return;
+        if(!funcionario || !ci) return;
 
         datos.push({
             funcionario,
@@ -161,50 +133,51 @@ fetch("hospedajes.csv")
 
     });
 
-    console.log("Datos cargados:", datos);
+    console.log("Registros cargados:", datos.length);
 });
 
 function buscar(){
 
-    const ci = document
-    .getElementById('ci')
-    .value
-    .replace(/\D/g,'');
+    const ciBuscado = document
+        .getElementById("ci")
+        .value
+        .replace(/\D/g,'')
+        .trim();
 
-    const persona =
-    datos.find(x => x.ci === ci);
+    const persona = datos.find(
+        x => x.ci === ciBuscado
+    );
 
-    const div =
-    document.getElementById('resultado');
+    const resultado =
+        document.getElementById("resultado");
 
     if(persona){
 
-       div.innerHTML = `
-    <div class="info">
+        resultado.innerHTML = `
+            <div class="info">
+                <div class="nombre">
+                    ${persona.funcionario}
+                </div>
 
-        <div class="nombre">
-            ${persona.funcionario}
-        </div>
-
-        <div class="hotel">
-            Hospedaje: ${persona.alojamiento}
-        </div>
-
-    </div>
-`;
+                <div class="hotel">
+                    Hospedaje: ${persona.alojamiento}
+                </div>
+            </div>
+        `;
 
     }else{
 
-        div.innerHTML=
-        `<p class="error">
-            No se encontró información para el CI ingresado.
-        </p>`;
+        resultado.innerHTML = `
+            <p class="error">
+                No se encontró información para el CI ingresado.
+            </p>
+        `;
     }
 }
 
 document.getElementById("ci")
 .addEventListener("keypress",function(e){
-    if(e.key==="Enter"){
+    if(e.key === "Enter"){
         buscar();
     }
 });
