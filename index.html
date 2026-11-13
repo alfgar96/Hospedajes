@@ -136,31 +136,32 @@ button:hover{
 let datos = [];
 
 fetch("hospedajes.csv")
-.then(r => r.text())
-.then(texto => {
+.then(response => response.text())
+.then(text => {
 
-    const filas = texto.trim().split("\n");
+    const filas = text.split(/\r?\n/);
 
-    for (let i = 0; i < filas.length; i++) {
+    filas.forEach(fila => {
 
-        const c = filas[i].split(";");
+        const c = fila.split(";");
 
-        if (c.length < 5) continue;
+        if (c.length < 5) return;
 
-        if (c[0] === "Nro.") continue;
+        const funcionario = c[2]?.trim();
+        const alojamiento = c[3]?.trim();
+        const ci = c[4]?.replace(/\D/g, "");
 
-        const ci = (c[4] || "").replace(/\D/g, "");
-
-        if (!ci) continue;
+        if (!funcionario || !ci) return;
 
         datos.push({
-            funcionario: c[2],
-            alojamiento: c[3],
-            ci: ci
+            funcionario,
+            alojamiento,
+            ci
         });
-    }
 
-    console.log(datos);
+    });
+
+    console.log("Datos cargados:", datos);
 });
 
 function buscar(){
