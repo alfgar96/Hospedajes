@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Consulta de Hospedaje</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    background:#f4f6f9;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    width:100%;
+    max-width:450px;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+.logo{
+    width:130px;
+    display:block;
+    margin:auto;
+    margin-bottom:15px;
+}
+
+h1{
+    text-align:center;
+    color:#003366;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    margin-top:10px;
+    padding:14px;
+    background:#0057b7;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#00408a;
+}
+
+.resultado{
+    margin-top:20px;
+}
+
+.info{
+    background:#eef5ff;
+    padding:15px;
+    border-radius:10px;
+}
+
+.nombre{
+    font-size:20px;
+    font-weight:bold;
+    color:#003366;
+}
+
+.hotel{
+    color:#008000;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.mapa{
+    display:inline-block;
+    margin-top:15px;
+    background:#28a745;
+    color:white;
+    text-decoration:none;
+    padding:10px 15px;
+    border-radius:8px;
+}
+
+.error{
+    color:red;
+    text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- Logo opcional -->
+    <!-- <img src="logo.png" class="logo"> -->
+
+    <h1>Consulta de Hospedaje</h1>
+
+    <input
+        id="ci"
+        placeholder="Ingrese su CI">
+
+    <button onclick="buscar()">
+        Consultar
+    </button>
+
+    <div id="resultado" class="resultado"></div>
+
+</div>
+
+<script>
+
+let datos = [];
+
+fetch("hospedajes.csv")
+.then(r => r.text())
+.then(texto => {
+
+    const filas = texto.trim().split("\n");
+
+    for(let i=1;i<filas.length;i++){
+
+        const c = filas[i].split(",");
+
+        datos.push({
+            funcionario:c[0],
+            alojamiento:c[1],
+            ci:c[2].replace(/\D/g,''),
+            direccion:c[3],
+            mapa:c[4]?.replace(/"/g,'')
+        });
+    }
+});
+
+function buscar(){
+
+    const ci = document
+    .getElementById('ci')
+    .value
+    .replace(/\D/g,'');
+
+    const persona =
+    datos.find(x => x.ci === ci);
+
+    const div =
+    document.getElementById('resultado');
+
+    if(persona){
+
+        div.innerHTML = `
+            <div class="info">
+
+                <div class="nombre">
+                    ${persona.funcionario}
+                </div>
+
+                <div class="hotel">
+                    ${persona.alojamiento}
+                </div>
+
+                <p style="margin-top:10px">
+                    ${persona.direccion}
+                </p>
+
+                <a
+                    class="mapa"
+                    href="${persona.mapa}"
+                    target="_blank">
+
+                    Ver ubicación
+                </a>
+
+            </div>
+        `;
+
+    }else{
+
+        div.innerHTML=
+        `<p class="error">
+            No se encontró información para el CI ingresado.
+        </p>`;
+    }
+}
+
+document.getElementById("ci")
+.addEventListener("keypress",function(e){
+    if(e.key==="Enter"){
+        buscar();
+    }
+});
+
+</script>
+
+</body>
+</html>
