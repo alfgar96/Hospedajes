@@ -178,31 +178,19 @@ function buscar(){
 
     if(persona){
 
-        div.innerHTML = `
-            <div class="info">
+       div.innerHTML = `
+    <div class="info">
 
-                <div class="nombre">
-                    ${persona.funcionario}
-                </div>
+        <div class="nombre">
+            ${persona.funcionario}
+        </div>
 
-                <div class="hotel">
-                    ${persona.alojamiento}
-                </div>
+        <div class="hotel">
+            Hospedaje: ${persona.alojamiento}
+        </div>
 
-                <p style="margin-top:10px">
-                    ${persona.direccion}
-                </p>
-
-                <a
-                    class="mapa"
-                    href="${persona.mapa}"
-                    target="_blank">
-
-                    Ver ubicación
-                </a>
-
-            </div>
-        `;
+    </div>
+`;
 
     }else{
 
