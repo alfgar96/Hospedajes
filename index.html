@@ -141,18 +141,26 @@ fetch("hospedajes.csv")
 
     const filas = texto.trim().split("\n");
 
-    for(let i=1;i<filas.length;i++){
+    for (let i = 0; i < filas.length; i++) {
 
-        const c = filas[i].split(",");
+        const c = filas[i].split(";");
+
+        if (c.length < 5) continue;
+
+        if (c[0] === "Nro.") continue;
+
+        const ci = (c[4] || "").replace(/\D/g, "");
+
+        if (!ci) continue;
 
         datos.push({
-            funcionario:c[0],
-            alojamiento:c[1],
-            ci:c[2].replace(/\D/g,''),
-            direccion:c[3],
-            mapa:c[4]?.replace(/"/g,'')
+            funcionario: c[2],
+            alojamiento: c[3],
+            ci: ci
         });
     }
+
+    console.log(datos);
 });
 
 function buscar(){
